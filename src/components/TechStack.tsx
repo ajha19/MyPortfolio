@@ -1,55 +1,60 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const TechStack = () => {
-  const [expandedCategory, setExpandedCategory] = useState<string | null>('Frontend');
-
-  const technologies = [
-    { name: 'React', category: 'Frontend', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' },
-    { name: 'JavaScript', category: 'Languages', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' },
-    { name: 'Java', category: 'Languages', color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' },
-    { name: 'HTML5', category: 'Frontend', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' },
-    { name: 'CSS3', category: 'Frontend', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' },
-    { name: 'TypeScript', category: 'Languages', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' },
-    { name: 'Node.js', category: 'Backend', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' },
-    { name: 'Express.js', category: 'Backend', color: 'bg-gray-100 text-gray-800 dark:bg-gray-700/30 dark:text-gray-300' },
-    { name: 'MongoDB', category: 'Databases', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' },
-    { name: 'MySQL', category: 'Databases', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' },
-    { name: 'PostgreSQL', category: 'Databases', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' },
-    { name: 'Supabase', category: 'Databases', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' },
-    { name: 'GraphQL', category: 'Tools', color: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300' },
-    { name: 'Chart.js', category: 'Tools', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' },
-    { name: 'Bootstrap', category: 'Frontend', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' },
-    { name: 'JWT', category: 'Tools', color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300' },
-    { name: 'Vite', category: 'Tools', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' },
-    { name: 'Figma', category: 'Design', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' },
-    { name: 'Blender', category: 'Design', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' },
-    { name: 'TensorFlow', category: 'AI/ML', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' },
-    { name: 'Git', category: 'Tools', color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' },
-    { name: 'GitHub', category: 'Tools', color: 'bg-gray-100 text-gray-800 dark:bg-gray-700/30 dark:text-gray-300' },
-    { name: 'Postman', category: 'Tools', color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' },
-    { name: 'NPM', category: 'Tools', color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' },
-    { name: 'React Router', category: 'Frontend', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' }
-  ];
-
   const categories = [
-    { name: 'Frontend', icon: '🎨', technologies: technologies.filter(tech => tech.category === 'Frontend') },
-    { name: 'Backend', icon: '⚙️', technologies: technologies.filter(tech => tech.category === 'Backend') },
-    { name: 'Languages', icon: '💻', technologies: technologies.filter(tech => tech.category === 'Languages') },
-    { name: 'Databases', icon: '🗄️', technologies: technologies.filter(tech => tech.category === 'Databases') },
-    { name: 'Tools', icon: '🛠️', technologies: technologies.filter(tech => tech.category === 'Tools') },
-    { name: 'Design', icon: '🎭', technologies: technologies.filter(tech => tech.category === 'Design') },
-    { name: 'AI/ML', icon: '🤖', technologies: technologies.filter(tech => tech.category === 'AI/ML') }
+    { 
+      name: 'Frontend', 
+      icon: '🎨', 
+      skills: ['React', 'HTML5', 'CSS3', 'Tailwind', 'Framer Motion', 'Bootstrap', 'React Router'] 
+    },
+    { 
+      name: 'Backend', 
+      icon: '⚙️', 
+      skills: ['Node.js', 'Express.js', 'REST APIs', 'GraphQL', 'Socket.io', 'Microservices'] 
+    },
+    { 
+      name: 'Databases', 
+      icon: '🗄️', 
+      skills: ['MongoDB', 'PostgreSQL', 'MySQL', 'Supabase', 'Firebase', 'Redis'] 
+    },
+    { 
+      name: 'Languages', 
+      icon: '💻', 
+      skills: ['JavaScript (ES6+)', 'TypeScript', 'Java', 'Python', 'Go', 'SQL'] 
+    },
+    { 
+      name: 'Tools & DevOps', 
+      icon: '🛠️', 
+      skills: ['Git', 'GitHub', 'Docker', 'AWS', 'Vercel', 'Postman', 'Vite', 'Webpack'] 
+    },
+    { 
+      name: 'AI & Design', 
+      icon: '🤖', 
+      skills: ['OpenAI API', 'TensorFlow', 'Figma', 'Adobe XD', 'Canva', 'Midjourney'] 
+    }
   ];
 
-  const toggleCategory = (categoryName: string) => {
-    setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
   };
 
   return (
-    <section id="skills" className="py-20 bg-white dark:bg-gray-900 transition-colors duration-500">
-      <div className="container mx-auto px-4">
+    <section id="skills" className="section-padding bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+       {/* Background decoration */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -57,101 +62,68 @@ const TechStack = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            💻 Tech Stack
+          <span className="text-blue-600 dark:text-blue-400 font-semibold tracking-wider uppercase text-sm">Skills & Tools</span>
+          <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-6 tracking-tight">
+            My <span className="text-gradient animate-title">Tech Stack</span>
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             A comprehensive toolkit for building modern, scalable web applications
           </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid gap-4">
-            {categories.map((category, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-blue-900/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500"
-              >
-                <button
-                  onClick={() => toggleCategory(category.name)}
-                  className="w-full flex items-center justify-between p-6 text-left hover:bg-white/50 dark:hover:bg-gray-700/50 rounded-2xl transition-all duration-300"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="text-2xl">{category.icon}</span>
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                      {category.name}
-                    </h3>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full">
-                      {category.technologies.length}
-                    </span>
-                  </div>
-                  <motion.div 
-                    animate={{ rotate: expandedCategory === category.name ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-gray-500 dark:text-gray-400"
-                  >
-                    <ChevronDown size={24} />
-                  </motion.div>
-                </button>
-                
-                <AnimatePresence>
-                  {expandedCategory === category.name && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-6 pb-6 pt-2">
-                        <div className="flex flex-wrap gap-3">
-                          {category.technologies.map((tech, techIndex) => (
-                            <motion.span
-                              key={techIndex}
-                              initial={{ opacity: 0, scale: 0.8 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ duration: 0.3, delay: techIndex * 0.05 }}
-                              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer ${tech.color}`}
-                              whileHover={{ scale: 1.1 }}
-                            >
-                              {tech.name}
-                            </motion.span>
-                          ))}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Quick Overview */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-12 text-center"
-          >
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-500 hover:scale-105">
-              <h3 className="text-2xl font-bold mb-4">🚀 Ready to Build Amazing Things</h3>
-              <p className="text-lg opacity-90 mb-4">
-                With expertise across the full stack, I can bring your ideas to life from concept to deployment.
-              </p>
-              <div className="flex flex-wrap justify-center gap-2 text-sm">
-                <span className="bg-white/20 px-3 py-1 rounded-full">Full-Stack Development</span>
-                <span className="bg-white/20 px-3 py-1 rounded-full">API Design</span>
-                <span className="bg-white/20 px-3 py-1 rounded-full">Database Architecture</span>
-                <span className="bg-white/20 px-3 py-1 rounded-full">UI/UX Implementation</span>
+        <motion.div 
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+        >
+          {categories.map((category, index) => (
+            <motion.div
+              key={index}
+              variants={item}
+              whileHover={{ y: -5 }}
+              className="glass-card p-8 hover:shadow-2xl transition-all duration-300 group"
+            >
+              <div className="flex items-center space-x-4 mb-6">
+                <span className="text-4xl filter drop-shadow-md group-hover:scale-110 transition-transform duration-300">{category.icon}</span>
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {category.name}
+                </h3>
               </div>
-            </div>
-          </motion.div>
-        </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {category.skills.map((skill, idx) => (
+                  <span 
+                    key={idx}
+                    className="px-3 py-1 bg-white/50 dark:bg-gray-700/50 border border-gray-100/50 dark:border-gray-600/50 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-all duration-300"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Quick Overview Badges */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mt-16 flex flex-wrap justify-center gap-4 text-center"
+        >
+             <div className="px-6 py-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 font-medium">
+               🚀 Full-Stack Development
+             </div>
+             <div className="px-6 py-3 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 font-medium">
+               🎨 UI/UX Design
+             </div>
+             <div className="px-6 py-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 font-medium">
+               🔒 Security Best Practices
+             </div>
+        </motion.div>
       </div>
     </section>
   );

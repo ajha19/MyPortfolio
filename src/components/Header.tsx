@@ -3,7 +3,11 @@ import { Menu, X, Mail, Github, Linkedin, Sun, Moon, FileText } from 'lucide-rea
 import { useTheme } from '../contexts/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Header = () => {
+interface HeaderProps {
+  onOpenResume: () => void;
+}
+
+const Header = ({ onOpenResume }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isDark, toggleTheme } = useTheme();
@@ -19,7 +23,14 @@ const Header = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
       setIsMenuOpen(false);
     }
   };
@@ -39,7 +50,7 @@ const Header = () => {
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       isScrolled 
-        ? 'bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-lg border-b border-gray-200/20 dark:border-gray-700/20' 
+        ? 'glass border-b border-gray-200/20 dark:border-gray-700/20' 
         : 'bg-transparent'
     }`}>
       <nav className="container mx-auto px-4 py-4">
@@ -77,7 +88,7 @@ const Header = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: 0.6 }}
               onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100/50 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-all duration-300"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all duration-300"
               whileHover={{ rotate: 90 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -85,17 +96,15 @@ const Header = () => {
             </motion.button>
 
             {/* Resume Button */}
-            <motion.a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+            <motion.button
+              onClick={onOpenResume}
               className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-medium hover:shadow-lg hover:brightness-110 transition-all duration-300"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <FileText size={18} />
               <span>Resume</span>
-            </motion.a>
+            </motion.button>
 
             <motion.div 
               className="flex items-center space-x-4 border-l border-gray-300 dark:border-gray-700 pl-4"
@@ -115,7 +124,7 @@ const Header = () => {
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
               onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
             >
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
             </motion.button>
@@ -136,31 +145,34 @@ const Header = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200/20 dark:border-gray-700/20 mt-4 rounded-2xl shadow-xl"
+              className="md:hidden overflow-hidden glass-card mt-4 absolute top-16 left-4 right-4 z-50 bg-white/90 dark:bg-gray-900/90 shadow-2xl rounded-2xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl"
             >
               <div className="flex flex-col space-y-4 p-6">
                 {navItems.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className="text-left text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
+                    className="text-left py-2 text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors border-b border-gray-100 dark:border-gray-700/50 last:border-0"
                   >
                     {item.label}
                   </button>
                 ))}
-                <a
-                  href="/resume.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium"
-                >
-                  <FileText size={18} />
-                  <span>View Resume</span>
-                </a>
-                <div className="flex justify-center space-x-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <MobileSocialLink href="mailto:jhaaman810@gmail.com" icon={<Mail size={20} />} />
-                  <MobileSocialLink href="https://github.com/ajha19" icon={<Github size={20} />} />
-                  <MobileSocialLink href="https://www.linkedin.com/in/aman-jha-3103a9185/" icon={<Linkedin size={20} />} />
+                <div className="pt-2 pb-4">
+                  <button
+                    onClick={() => {
+                      onOpenResume();
+                      setIsMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all"
+                  >
+                    <FileText size={18} />
+                    <span>View Resume</span>
+                  </button>
+                </div>
+                <div className="flex justify-center space-x-8 pt-2">
+                  <MobileSocialLink href="mailto:jhaaman810@gmail.com" icon={<Mail size={24} />} />
+                  <MobileSocialLink href="https://github.com/ajha19" icon={<Github size={24} />} />
+                  <MobileSocialLink href="https://www.linkedin.com/in/aman-jha-3103a9185/" icon={<Linkedin size={24} />} />
                 </div>
               </div>
             </motion.div>

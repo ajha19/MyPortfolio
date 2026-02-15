@@ -1,5 +1,6 @@
 
 import { Code, Database, Globe, Zap, Users, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const About = () => {
   const highlights = [
@@ -35,22 +36,59 @@ const About = () => {
     }
   ];
 
-  return (
-    <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20 transition-colors duration-500">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent animate-fade-in-up">
-            About Me
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto animate-fade-in-up delay-200">
-            Passionate about crafting exceptional digital experiences through code
-          </p>
-        </div>
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-          <div className="space-y-6 animate-fade-in-left">
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">💻 My Journey</h3>
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <section id="about" className="section-padding bg-white dark:bg-gray-800 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="container mx-auto relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <span className="text-blue-600 dark:text-blue-400 font-semibold tracking-wider uppercase text-sm">Who I Am</span>
+          <h2 className="text-4xl md:text-5xl font-bold mt-2 mb-6 tracking-tight">
+            About <span className="text-gradient animate-title">Me</span>
+          </h2>
+          <motion.div 
+            initial={{ width: 0 }}
+            whileInView={{ width: 100 }}
+            viewport={{ once: true }}
+            className="h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full"
+          />
+        </motion.div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          {/* Left Column: Narrative */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="space-y-8"
+          >
+            <div className="glass-card p-8 hover:border-blue-500/30 transition-colors group">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                💻 My Journey
+              </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                 I'm a MERN Stack Developer with 3 years of experience in building scalable, 
                 full-stack web applications. My journey in software development has been driven 
@@ -63,51 +101,52 @@ const About = () => {
               </p>
             </div>
 
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">🎯 My Approach</h3>
+            <div className="glass-card p-8 hover:border-purple-500/30 transition-colors group">
+              <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                🎯 My Approach
+              </h3>
               <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                 I focus on understanding the problem deeply before writing any code. 
                 This helps me create solutions that are not just technically sound, 
                 but also user-centric and business-focused.
               </p>
             </div>
-          </div>
+            
+            {/* CTA */}
+            <div className="pt-4">
+              <a href="#contact" className="btn-primary inline-flex items-center gap-2">
+                Let's Talk
+                <Users className="w-4 h-4" />
+              </a>
+            </div>
+          </motion.div>
 
-          <div className="grid gap-6 animate-fade-in-right">
+          {/* Right Column: Highlights Grid */}
+          <motion.div 
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="grid sm:grid-cols-2 gap-6"
+          >
             {highlights.map((highlight, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 group"
-                style={{ animationDelay: `${index * 100}ms` }}
+                variants={item}
+                className="glass-card p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
               >
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 p-2 bg-gray-50 dark:bg-gray-700 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    {highlight.icon}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">{highlight.title}</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">{highlight.description}</p>
-                  </div>
+                <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl w-fit group-hover:scale-110 transition-transform duration-300">
+                  {highlight.icon}
                 </div>
-              </div>
+                <h4 className="font-bold text-lg text-gray-800 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  {highlight.title}
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {highlight.description}
+                </p>
+              </motion.div>
             ))}
-          </div>
-        </div>
-
-        {/* Contact CTA */}
-        <div className="text-center animate-fade-in-up delay-600">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white max-w-2xl mx-auto hover:shadow-2xl transition-all duration-500 hover:scale-105">
-            <h3 className="text-2xl font-bold mb-4">Let's Work Together! 😊</h3>
-            <p className="mb-6">
-              Email me for collaboration, projects, or anything else. I'm always excited to discuss new opportunities!
-            </p>
-            <a
-              href="mailto:jhaaman810@gmail.com"
-              className="inline-flex items-center px-8 py-3 bg-white text-blue-600 font-semibold rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300 hover:bg-gray-50"
-            >
-              Get In Touch
-            </a>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
