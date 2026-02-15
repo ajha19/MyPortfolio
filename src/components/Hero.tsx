@@ -113,10 +113,22 @@ const Hero = ({ onOpenResume }: HeroProps) => {
 
             {/* Personal Project Picture Placeholder */}
             <motion.div 
-              className="relative w-full aspect-square rounded-[2rem] overflow-hidden shadow-2xl z-10 border border-white/20 glass-card group"
+              className="relative w-full aspect-square rounded-[2rem] overflow-hidden shadow-2xl z-10 border border-white/20 glass-card group cursor-pointer"
               initial={{ rotateY: -5, rotateX: 5 }}
               whileHover={{ scale: 1.02, rotateY: 0, rotateX: 0 }}
               transition={{ duration: 0.5 }}
+              onClick={() => {
+                const element = document.getElementById('projects');
+                if (element) {
+                  const headerOffset = 80;
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                  });
+                }
+              }}
             >
               {/* REPLACE THIS IMAGE URL WITH YOUR PERSONAL PROJECT PICTURE */}
               <img 

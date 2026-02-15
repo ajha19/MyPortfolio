@@ -20,21 +20,6 @@ const Header = ({ onOpenResume }: HeaderProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-      setIsMenuOpen(false);
-    }
-  };
-
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'about', label: 'About' },
@@ -55,121 +40,103 @@ const Header = ({ onOpenResume }: HeaderProps) => {
     }`}>
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent cursor-pointer"
-            onClick={() => scrollToSection('home')}
-            whileHover={{ scale: 1.05 }}
+          <a 
+            href="#home"
+            className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => setIsMenuOpen(false)}
           >
             AJ
-          </motion.div>
+          </a>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item, index) => (
-              <motion.button
+            {navItems.map((item) => (
+              <a
                 key={item.id}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 * index }}
-                onClick={() => scrollToSection(item.id)}
+                href={`#${item.id}`}
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300 relative group"
               >
                 {item.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </motion.button>
+              </a>
             ))}
             
             {/* Theme Toggle */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.6 }}
+            <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all duration-300"
-              whileHover={{ rotate: 90 }}
-              whileTap={{ scale: 0.9 }}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-all duration-300 hover:rotate-90 active:scale-90"
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
-            </motion.button>
+            </button>
 
             {/* Resume Button */}
-            <motion.button
+            <button
               onClick={onOpenResume}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-medium hover:shadow-lg hover:brightness-110 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-medium hover:shadow-lg hover:brightness-110 active:scale-95 transition-all duration-300"
             >
               <FileText size={18} />
               <span>Resume</span>
-            </motion.button>
+            </button>
 
-            <motion.div 
-              className="flex items-center space-x-4 border-l border-gray-300 dark:border-gray-700 pl-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
-            >
+            <div className="flex items-center space-x-4 border-l border-gray-300 dark:border-gray-700 pl-4">
               <SocialLink href="mailto:jhaaman810@gmail.com" icon={<Mail size={20} />} delay={0} />
               <SocialLink href="https://github.com/ajha19" icon={<Github size={20} />} delay={0.1} />
               <SocialLink href="https://www.linkedin.com/in/aman-jha-3103a9185/" icon={<Linkedin size={20} />} delay={0.2} />
-            </motion.div>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-4">
-             <motion.button
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 transition-colors"
             >
               {isDark ? <Sun size={18} /> : <Moon size={18} />}
-            </motion.button>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
+            </button>
+            <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors p-1"
+              aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Overlay */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden glass-card mt-4 absolute top-16 left-4 right-4 z-50 bg-white/90 dark:bg-gray-900/90 shadow-2xl rounded-2xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-xl"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden fixed inset-x-4 top-20 p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 z-50 overflow-y-auto max-h-[80vh]"
             >
-              <div className="flex flex-col space-y-4 p-6">
+              <div className="flex flex-col space-y-2">
                 {navItems.map((item) => (
-                  <button
+                  <a
                     key={item.id}
-                    onClick={() => scrollToSection(item.id)}
-                    className="text-left py-2 text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors border-b border-gray-100 dark:border-gray-700/50 last:border-0"
+                    href={`#${item.id}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-4 py-3 text-lg font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors"
                   >
                     {item.label}
-                  </button>
+                  </a>
                 ))}
-                <div className="pt-2 pb-4">
+                <div className="pt-4 pb-2">
                   <button
                     onClick={() => {
                       onOpenResume();
                       setIsMenuOpen(false);
                     }}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all"
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium shadow-md active:scale-95 transition-all"
                   >
                     <FileText size={18} />
                     <span>View Resume</span>
                   </button>
                 </div>
-                <div className="flex justify-center space-x-8 pt-2">
+                <div className="flex justify-center space-x-8 pt-4 border-t border-gray-100 dark:border-gray-800 mt-2">
                   <MobileSocialLink href="mailto:jhaaman810@gmail.com" icon={<Mail size={24} />} />
                   <MobileSocialLink href="https://github.com/ajha19" icon={<Github size={24} />} />
                   <MobileSocialLink href="https://www.linkedin.com/in/aman-jha-3103a9185/" icon={<Linkedin size={24} />} />
@@ -182,6 +149,7 @@ const Header = ({ onOpenResume }: HeaderProps) => {
     </motion.header>
   );
 };
+
 
 const SocialLink = ({ href, icon, delay }: { href: string; icon: ReactNode; delay: number }) => (
   <motion.a
