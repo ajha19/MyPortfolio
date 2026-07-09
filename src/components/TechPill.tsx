@@ -1,0 +1,143 @@
+import type { ComponentType, SVGProps } from "react";
+import {
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiJavascript,
+  SiNodedotjs,
+  SiPostgresql,
+  SiPwa,
+  SiMongodb,
+  SiExpress,
+  SiPython,
+  SiFlask,
+  SiTailwindcss,
+  SiRedux,
+  SiHtml5,
+  SiCss,
+  SiDocker,
+  SiSupabase,
+  SiRazorpay,
+  SiGooglegemini,
+  SiJsonwebtokens,
+  SiLinux,
+  SiGit,
+  SiApple,
+} from "react-icons/si";
+import {
+  Cloud,
+  Code2,
+  Cpu,
+  Database,
+  GitBranch,
+  KeyRound,
+  LayoutDashboard,
+  Network,
+  Search,
+  ServerCog,
+  ShieldCheck,
+  Sparkles,
+  Wallet,
+  Workflow,
+} from "lucide-react";
+
+type IconType = ComponentType<SVGProps<SVGSVGElement>>;
+
+const MAP: Record<string, IconType> = {
+  react: SiReact,
+  "react.js": SiReact,
+  "next.js": SiNextdotjs,
+  nextjs: SiNextdotjs,
+  typescript: SiTypescript,
+  javascript: SiJavascript,
+  "node.js": SiNodedotjs,
+  nodejs: SiNodedotjs,
+  postgresql: SiPostgresql,
+  pwa: SiPwa,
+  mongodb: SiMongodb,
+  "express.js": SiExpress,
+  express: SiExpress,
+  python: SiPython,
+  flask: SiFlask,
+  "tailwind css": SiTailwindcss,
+  tailwind: SiTailwindcss,
+  "redux toolkit": SiRedux,
+  redux: SiRedux,
+  html5: SiHtml5,
+  css3: SiCss,
+  docker: SiDocker,
+  aws: Cloud,
+  linux: SiLinux,
+  git: SiGit,
+  "apple wallet": SiApple,
+  supabase: SiSupabase,
+  razorpay: SiRazorpay,
+  "gemini llm": SiGooglegemini,
+  gemini: SiGooglegemini,
+  "grok ai": Sparkles,
+  grok: Sparkles,
+  jwt: SiJsonwebtokens,
+
+  // generic fallbacks
+  "rest apis": Network,
+  auth: KeyRound,
+  "ci/cd": Workflow,
+  pm2: ServerCog,
+  payments: Wallet,
+  seo: Search,
+  "ai evaluation": Sparkles,
+  "code review": Code2,
+  "system design": LayoutDashboard,
+  "app modernization": GitBranch,
+  security: ShieldCheck,
+  database: Database,
+  cpu: Cpu,
+};
+
+const COLORS: Record<string, string> = {
+  react: "#61DAFB",
+  "react.js": "#61DAFB",
+  "next.js": "#ffffff",
+  nextjs: "#ffffff",
+  typescript: "#3178C6",
+  javascript: "#F7DF1E",
+  "node.js": "#5FA04E",
+  nodejs: "#5FA04E",
+  postgresql: "#4169E1",
+  pwa: "#5A0FC8",
+  mongodb: "#47A248",
+  "express.js": "#ffffff",
+  express: "#ffffff",
+  python: "#3776AB",
+  flask: "#ffffff",
+  "tailwind css": "#06B6D4",
+  tailwind: "#06B6D4",
+  "redux toolkit": "#764ABC",
+  redux: "#764ABC",
+  html5: "#E34F26",
+  css3: "#1572B6",
+  docker: "#2496ED",
+  aws: "#FF9900",
+  linux: "#FCC624",
+  git: "#F05032",
+  "apple wallet": "#ffffff",
+  supabase: "#3ECF8E",
+  razorpay: "#3395FF",
+  "gemini llm": "#4285F4",
+  gemini: "#4285F4",
+  "grok ai": "#ffffff",
+  grok: "#ffffff",
+  jwt: "#D63AFF",
+};
+
+export function TechPill({ name }: { name: string }) {
+  const key = name.toLowerCase();
+  const Icon = MAP[key] ?? Code2;
+  const color = COLORS[key];
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-pill px-2.5 py-1 text-[0.78rem] font-medium text-fg transition hover:border-border-strong">
+      <Icon className="h-3.5 w-3.5 shrink-0" style={color ? { color } : undefined} aria-hidden />
+      {name}
+    </span>
+  );
+}

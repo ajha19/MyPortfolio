@@ -1,66 +1,96 @@
-# 🚀 Aman Jha - Full Stack Developer Portfolio
+# Aman Jha — Personal Portfolio & Analytics Dashboard
 
-![Portfolio Banner](src/assets/images/portfolio.svg)
-
-> **"Programs must be written for people to read, and only incidentally for machines to execute."**
-
-A modern, high-performance, and visually stunning portfolio website showcasing my journey as a Full Stack Developer. Built with the latest web technologies to demonstrate best practices in UI/UX design, accessibility, and code quality.
+A minimal, editorial-style developer portfolio presenting experiences, skills, and projects, coupled with a lightweight, privacy-focused analytics dashboard. Inspired by clean editorial portfolios, it provides real-time traffic visualization for the administrator while maintaining strict user privacy.
 
 ---
 
-## 🌟 Features
+## 🛠️ Technology Stack
 
-- **🎨 Modern & Responsive Design**: Built with a mobile-first approach using Tailwind CSS.
-- **🌓 Dark/Light Mode**: Seamless theme switching with persistent state.
-- **⚡ High Performance**: Optimized with Vite for lightning-fast HMR and build times.
-- **✨ Smooth Animations**: Powered by Framer Motion for delightful user interactions.
-- **📊 Analytics Dashboard**: Integrated visitor tracking and insights.
-- **📱 Contact Integration**: Direct email and social media links.
-- **📄 Resume Access**: Easy access to view and download my professional resume.
+- **Frontend & Routing:** React 19, [TanStack Start](https://tanstack.com/router/v1/docs/start/overview) (full-stack React SSR), Tailwind CSS v4, and Lucide React.
+- **Analytics & Visualizations:** Recharts (responsive line, horizontal bar, and doughnut charts).
+- **Backend Server:** Nitro server framework (embedded in TanStack Start).
+- **Database & ORM:** CockroachDB Serverless, queried via [Drizzle ORM](https://orm.drizzle.team/).
 
 ---
 
-## 🛠️ Tech Stack
+## 📊 Analytics Features & Architecture
 
-This project is built using a robust and modern technology stack:
+We prioritize speed, security, and low database overhead to remain within CockroachDB Serverless limits:
 
-| Category | Technologies |
-|----------|--------------|
-| **Frontend** | ![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white) |
-| **Animation** | ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat&logo=framer&logoColor=white) |
-| **Icons** | ![Lucide React](https://img.shields.io/badge/Lucide_React-F7df1e?style=flat&logo=lucide&logoColor=black) |
-| **Build Tool** | ![Vite](https://img.shields.io/badge/Vite-B73C9D?style=flat&logo=vite&logoColor=white) |
-| **Backend/DB** | ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white) (Integration ready) |
+1. **Failsafe Tracking:** All telemetry writes are encapsulated in server-side and client-side try-catch safety boundaries. Telemetry failures never interrupt visitor navigation.
+2. **Page View Throttling:** Client routers throttle identical path logs using a 5-second sliding guard to prevent reload spikes or rapid tab transitions from creating redundant db writes.
+3. **Outbound Click Capture:** Automatically tracks outbound transitions to critical contact channels (LinkedIn, GitHub, Email, Calendly schedules) and external project live demos.
+4. **Geo & User-Agent Detection:** Location is determined through standard edge delivery headers (`cf-ipcountry`, `x-vercel-ip-country`, etc.), preserving client performance.
+5. **Exclusion Filters:** Automated filters bypass tracking requests matching common search crawler/bot regexes or containing a valid administrator login session.
 
 ---
 
-## 📂 Project Structure
+## 🏗️ Folder Architecture
 
-```bash
-src/
-├── assets/          # Static assets (Images, Icons)
-├── components/      # Reusable UI components (Header, Hero, Projects, etc.)
-├── contexts/        # React Contexts (ThemeContext)
-├── hooks/           # Custom React Hooks
-├── lib/             # Utility functions and configurations
-└── App.tsx          # Main Application Component
+```text
+├── src/
+│   ├── components/
+│   │   ├── AnalyticsCharts.tsx    # Recharts trend, source, and device components
+│   │   ├── AnalyticsTracker.tsx   # React hook capturing route paths and clicks
+│   │   └── ui/                     # UI components (sonner, badges, buttons)
+│   ├── data/
+│   │   ├── schema.ts               # Drizzle schemas (analytics_sessions, analytics_events)
+│   │   ├── db.ts                   # Database driver client singleton
+│   │   ├── auth.ts                 # Admin auth helpers and cookies
+│   │   └── analytics.ts            # Server-side logging and analytics metrics handlers
+│   └── routes/
+│       ├── __root.tsx              # Root app router layout (mounts AnalyticsTracker)
+│       └── admin/
+│           ├── _layout/
+│           │   ├── index.tsx       # Analytics Dashboard overview UI
+│           │   └── projects.tsx    # Portfolio projects panel
+│           └── login.tsx           # Admin authentication gateway
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🔑 Environment Secrets Configuration
 
-Follow these steps to run the project locally:
+Configure the local environment values inside a root `.env` file:
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/ajha19/MyPortfolio.git
-cd MyPortfolio
+```env
+DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=require
 ```
 
-### 2. Install Dependencies
+---
+
+## 🚀 Setup & Local Development Cycle
+
+### 1. Install Dependencies
 ```bash
 npm install
+```
+
+### 2. Verify Database Schema
+To check current database compatibility or manually define database tables:
+```bash
+npx drizzle-kit generate
+```
+Since CockroachDB might restrict introspection queries in drizzle-kit push CLI, database schemas can also be verified manually on CockroachDB with the following SQL:
+```sql
+CREATE TABLE IF NOT EXISTS analytics_sessions (
+  id TEXT PRIMARY KEY,
+  visitor_id UUID NOT NULL,
+  device_type TEXT NOT NULL,
+  browser TEXT NOT NULL,
+  os TEXT NOT NULL,
+  country TEXT NOT NULL,
+  referrer TEXT NOT NULL DEFAULT 'direct',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id TEXT NOT NULL REFERENCES analytics_sessions(id) ON DELETE CASCADE,
+  event_type TEXT NOT NULL,
+  event_key TEXT NOT NULL,
+  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 ```
 
 ### 3. Run Development Server
@@ -68,9 +98,10 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser to view the portfolio.
-
----
+### 4. Build Production Bundle
+```bash
+npm run build
+```
 
 ## 📬 Contact Me
 
@@ -79,7 +110,7 @@ I'm always open to discussing new projects, creative ideas, or opportunities to 
 - **Email**: [jhaaman810@gmail.com](mailto:jhaaman810@gmail.com)
 - **LinkedIn**: [Aman Jha](https://www.linkedin.com/in/aman-jha-3103a9185/)
 - **GitHub**: [ajha19](https://github.com/ajha19)
-
+- **Portfolio**: [Aman Jha](https://aman-jha-portfolio.netlify.app/)
 ---
 
-Made with ❤️ by **Aman Jha**
+Made with ❤️ and &lt;/&gt; by **[Aman Jha](https://github.com/ajha19)**
