@@ -83,6 +83,12 @@ function Portfolio() {
                 {label}
               </a>
             ))}
+            <Link
+              to="/resume"
+              className="hidden rounded-lg px-2.75 py-1.5 text-sm text-muted transition hover:bg-pill hover:text-fg-strong sm:inline-block"
+            >
+              Resume
+            </Link>
             <div className="ml-1">
               <ThemeToggle />
             </div>
