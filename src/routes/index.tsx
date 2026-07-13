@@ -18,18 +18,23 @@ import { GitaQuote } from "@/components/GitaQuote";
 import { useReveal } from "@/hooks/useReveal";
 import amanPhoto from "@/assets/aman.jpeg";
 import { getProjects } from "@/data/projects";
-import { getSiteContent, getGitHubContributions } from "@/data/content";
+import { getSiteContent, getGitHubContributions, getLatestCommit } from "@/data/content";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
     const [projects, content] = await Promise.all([getProjects(), getSiteContent()]);
-    const githubContributions = await getGitHubContributions({
-      data: content.githubChartUsername,
-    }).catch((err) => {
-      console.error(err);
-      return 643;
-    });
-    return { projects, content, githubContributions };
+    const username = content.githubChartUsername || "ajha19";
+    const [githubContributions, githubLatestCommit] = await Promise.all([
+      getGitHubContributions({ data: username }).catch((err) => {
+        console.error(err);
+        return 643;
+      }),
+      getLatestCommit({ data: username }).catch((err) => {
+        console.error(err);
+        return null;
+      }),
+    ]);
+    return { projects, content, githubContributions, githubLatestCommit };
   },
   component: Portfolio,
 });
@@ -40,7 +45,7 @@ export const Route = createFileRoute("/")({
 
 function Portfolio() {
   useReveal();
-  const { projects, content, githubContributions } = Route.useLoaderData();
+  const { projects, content, githubContributions, githubLatestCommit } = Route.useLoaderData();
   const [scrolled, setScrolled] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
 
@@ -319,6 +324,37 @@ function Portfolio() {
               I'm shipping consistently across client work, side projects and open-source
               explorations — tracking every commit.
             </p>
+            {githubLatestCommit && (
+              <div className="mb-4 rounded-[10px] border border-border bg-pill/20 p-3.5 flex items-start gap-3">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 mt-1.5 shrink-0 animate-pulse" />
+                <div className="min-w-0 flex-1">
+                  <span className="font-mono text-[0.66rem] uppercase tracking-wider text-muted block mb-1">
+                    Latest Push Activity
+                  </span>
+                  <a
+                    href={githubLatestCommit.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[0.88rem] font-medium text-fg-strong hover:underline block truncate"
+                    title={githubLatestCommit.message}
+                  >
+                    {githubLatestCommit.message}
+                  </a>
+                  <div className="flex items-center gap-1.5 mt-1 text-[0.74rem] text-muted font-mono">
+                    <span className="text-fg-medium truncate">{githubLatestCommit.repoName}</span>
+                    <span>•</span>
+                    <span className="text-faint">
+                      {new Date(githubLatestCommit.date).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="overflow-x-auto rounded-[10px] border border-border bg-pill/40 p-3">
               <img
                 src={`https://ghchart.rshah.org/26a641/${content.githubChartUsername}`}

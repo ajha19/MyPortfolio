@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireAdmin } from "./auth";
 import { db } from "./db";
 import { projects } from "./schema";
+import { triggerSync } from "./sync";
 
 const projectInput = z.object({
   title: z.string().min(1),
@@ -26,6 +27,7 @@ export const createProject = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireAdmin();
     const [created] = await db.insert(projects).values(data).returning();
+    triggerSync();
     return created;
   });
 
@@ -40,6 +42,7 @@ export const updateProject = createServerFn({ method: "POST" })
       .where(eq(projects.id, id))
       .returning();
     if (!updated) throw Object.assign(new Error("Project not found"), { statusCode: 404 });
+    triggerSync();
     return updated;
   });
 
@@ -48,5 +51,6 @@ export const deleteProject = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireAdmin();
     await db.delete(projects).where(eq(projects.id, data.id));
+    triggerSync();
     return { ok: true };
   });

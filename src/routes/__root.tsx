@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -130,9 +130,31 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
+import { getSyncRevision } from "@/data/sync";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const localRevision = useRef<number | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const serverRevision = await getSyncRevision();
+        if (localRevision.current === null) {
+          localRevision.current = serverRevision;
+        } else if (serverRevision > localRevision.current) {
+          localRevision.current = serverRevision;
+          router.invalidate();
+          queryClient.invalidateQueries();
+        }
+      } catch (err) {
+        // ignore network error
+      }
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [router, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

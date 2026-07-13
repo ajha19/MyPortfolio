@@ -5,6 +5,7 @@ import { z } from "zod";
 import { requireAdmin } from "./auth";
 import { db } from "./db";
 import { siteContent } from "./schema";
+import { triggerSync } from "./sync";
 
 const experienceEntry = z.object({
   company: z.string().min(1),
@@ -69,6 +70,7 @@ export const updateSiteContent = createServerFn({ method: "POST" })
       .set({ ...updateData, updatedAt: new Date() })
       .where(eq(siteContent.id, 1))
       .returning();
+    triggerSync();
     return updated;
   });
 
@@ -102,4 +104,72 @@ export const getGitHubContributions = createServerFn({ method: "GET" })
       }
       return 643; // Static fallback representative of Aman Jha's activity
     }
+  });
+
+export interface GitHubCommit {
+  repoName: string;
+  message: string;
+  url: string;
+  date: string;
+}
+
+let cachedCommit: GitHubCommit | null = null;
+let lastCommitFetchTime = 0;
+const COMMIT_CACHE_TTL = 120 * 1000; // 2 minutes
+
+export const getLatestCommit = createServerFn({ method: "GET" })
+  .validator(z.string())
+  .handler(async ({ data: username }) => {
+    const now = Date.now();
+    if (cachedCommit !== null && now - lastCommitFetchTime < COMMIT_CACHE_TTL) {
+      return cachedCommit;
+    }
+
+    try {
+      const response = await fetch(`https://api.github.com/users/${username}/events`, {
+        headers: {
+          "User-Agent": "MyPortfolio-App",
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`GitHub events API returned status ${response.status}`);
+      }
+      interface GitHubEvent {
+        type: string;
+        repo: { name: string };
+        created_at: string;
+        payload?: {
+          commits?: {
+            sha: string;
+            message: string;
+          }[];
+        };
+      }
+      const events = (await response.json()) as GitHubEvent[];
+      const pushEvent = events.find((e) => e.type === "PushEvent");
+      if (pushEvent && pushEvent.payload?.commits && pushEvent.payload.commits.length > 0) {
+        const commit = pushEvent.payload.commits[0];
+        const result: GitHubCommit = {
+          repoName: pushEvent.repo.name,
+          message: commit.message,
+          url: `https://github.com/${pushEvent.repo.name}/commit/${commit.sha}`,
+          date: pushEvent.created_at,
+        };
+        cachedCommit = result;
+        lastCommitFetchTime = now;
+        return result;
+      }
+    } catch (e) {
+      console.error("Error fetching latest dynamic commit event:", e);
+    }
+
+    if (cachedCommit !== null) {
+      return cachedCommit;
+    }
+    return {
+      repoName: "ajha19/MyPortfolio",
+      message: "feat: add Resume link to main homepage header navbar",
+      url: "https://github.com/ajha19/MyPortfolio/commit/69c528b",
+      date: new Date().toISOString(),
+    };
   });
