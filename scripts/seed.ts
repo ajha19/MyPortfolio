@@ -111,7 +111,14 @@ async function seedSiteContent() {
       { category: "Databases", items: ["MongoDB", "PostgreSQL", "Supabase"] },
       { category: "Cloud / DevOps", items: ["Docker", "AWS", "CI/CD", "PM2", "Linux", "Git"] },
     ],
-    education: [{ period: "2017 — 2021", title: "B.Tech in Computer Science", place: "India" }],
+    education: [
+      {
+        period: "2017 — 2021",
+        title: "B.Tech Computer Science",
+        place: "Geetanjali Institute of Technical Studies",
+        logoUrl: "/logos/gits.png",
+      },
+    ],
     linkedinUrl: "https://www.linkedin.com/in/aman-jha-3103a9185/",
     githubUrl: "https://github.com/ajha19",
     email: "mailto:jhaaman810@gmail.com",

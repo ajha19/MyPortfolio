@@ -50,6 +50,7 @@ export type EducationEntry = {
   title: string;
   place: string;
   period: string;
+  logoUrl?: string;
 };
 
 export const siteContent = pgTable("site_content", {

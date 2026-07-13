@@ -18,12 +18,18 @@ import { GitaQuote } from "@/components/GitaQuote";
 import { useReveal } from "@/hooks/useReveal";
 import amanPhoto from "@/assets/aman.jpeg";
 import { getProjects } from "@/data/projects";
-import { getSiteContent } from "@/data/content";
+import { getSiteContent, getGitHubContributions } from "@/data/content";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
     const [projects, content] = await Promise.all([getProjects(), getSiteContent()]);
-    return { projects, content };
+    const githubContributions = await getGitHubContributions({
+      data: content.githubChartUsername,
+    }).catch((err) => {
+      console.error(err);
+      return 643;
+    });
+    return { projects, content, githubContributions };
   },
   component: Portfolio,
 });
@@ -34,10 +40,12 @@ export const Route = createFileRoute("/")({
 
 function Portfolio() {
   useReveal();
-  const { projects, content } = Route.useLoaderData();
+  const { projects, content, githubContributions } = Route.useLoaderData();
   const [scrolled, setScrolled] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
+    setIsTouch(window.matchMedia("(hover: none)").matches);
     const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -212,16 +220,14 @@ function Portfolio() {
         <Section id="projects" eyebrow="Featured" title="Projects">
           <div className="flex flex-col gap-4">
             {projects.slice(0, 2).map((p) => (
-              <Card key={p.id}>
+              <Card key={p.id} tabIndex={isTouch ? undefined : 0}>
                 <a
-                  href={p.href}
+                  href={isTouch ? p.href : undefined}
                   target="_blank"
-                  rel="noopener"
-                  data-analytics-click={`click:project:${p.title
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, "-")
-                    .replace(/(^-|-$)/g, "")}`}
-                  className="group -mx-5 -mt-5 mb-4 block overflow-hidden rounded-t-[14px] border-b border-border"
+                  rel="noopener noreferrer"
+                  className={`group/cover -mx-5 -mt-5 mb-4 block overflow-hidden rounded-t-[14px] border-b border-border relative ${
+                    isTouch ? "cursor-pointer" : "cursor-default"
+                  }`}
                 >
                   <img
                     src={p.coverUrl}
@@ -231,22 +237,34 @@ function Portfolio() {
                     height={720}
                     className="aspect-video w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                   />
+                  {!isTouch && (
+                    <div className="absolute inset-0 bg-black/45 backdrop-blur-[3px] flex items-center justify-center opacity-0 group-hover/cover:opacity-100 group-focus-within/cover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover/cover:pointer-events-auto group-focus-within/cover:pointer-events-auto">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(p.href, "_blank", "noopener,noreferrer");
+                        }}
+                        className="px-4.25 py-2.25 bg-white text-black font-semibold rounded-full hover:bg-neutral-100 focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 outline-none duration-150 shadow-md text-sm cursor-pointer"
+                        tabIndex={0}
+                      >
+                        Preview
+                      </button>
+                    </div>
+                  )}
                 </a>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <a
-                      href={p.href}
+                      href={isTouch ? p.href : undefined}
                       target="_blank"
-                      rel="noopener"
-                      data-analytics-click={`click:project:${p.title
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, "-")
-                        .replace(/(^-|-$)/g, "")}`}
-                      className="text-[1.05rem] font-semibold tracking-[-0.02em] text-fg-strong hover:underline"
+                      rel="noopener noreferrer"
+                      className={`block text-[1.05rem] font-semibold tracking-[-0.02em] text-fg-strong ${
+                        isTouch ? "hover:underline cursor-pointer" : "cursor-default"
+                      }`}
                     >
                       {p.title}
                     </a>
-                    <div className="mt-1 inline-flex items-center gap-1.5 font-mono text-[0.68rem] text-muted">
+                    <div className="mt-2 flex items-center gap-2 font-mono text-[0.68rem] text-muted">
                       <span
                         className={`h-1.75 w-1.75 rounded-full ${p.live ? "bg-ok" : "bg-faint"}`}
                         style={p.live ? { animation: "pulse-dot 2.4s infinite" } : undefined}
@@ -258,7 +276,7 @@ function Portfolio() {
                     <a
                       href={p.href}
                       target="_blank"
-                      rel="noopener"
+                      rel="noopener noreferrer"
                       data-analytics-click={`click:project:${p.title
                         .toLowerCase()
                         .replace(/[^a-z0-9]+/g, "-")
@@ -291,9 +309,9 @@ function Portfolio() {
         <Section id="github" eyebrow="Activity" title="On GitHub">
           <Card>
             <p className="mb-4 text-[0.95rem] text-muted [&_b]:font-semibold [&_b]:text-fg-strong">
-              In <b>2026</b>, I've been shipping consistently across client work, side projects and
-              open-source explorations — tracking every commit, PR and code review on GitHub. Below
-              is my live contribution activity for the past year.
+              In <b>2026</b>, I've made <b>{githubContributions} contributions</b> so far on GitHub.
+              I'm shipping consistently across client work, side projects and open-source
+              explorations — tracking every commit.
             </p>
             <div className="overflow-x-auto rounded-[10px] border border-border bg-pill/40 p-3">
               <img
@@ -420,9 +438,15 @@ function Section({
   );
 }
 
-function Card({ children }: { children: ReactNode }) {
+function Card({
+  children,
+  ...props
+}: { children: ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <article className="reveal rounded-[14px] border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-card-hover">
+    <article
+      className="reveal rounded-[14px] border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-card-hover focus-within:border-border-strong focus-within:bg-card-hover outline-none"
+      {...props}
+    >
       {children}
     </article>
   );

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { TechPill } from "@/components/TechPill";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -26,6 +27,12 @@ export const Route = createFileRoute("/projects")({
 function ProjectsPage() {
   useReveal();
   const projects = Route.useLoaderData();
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    setIsTouch(window.matchMedia("(hover: none)").matches);
+  }, []);
+
   return (
     <>
       <Oneko />
@@ -67,17 +74,16 @@ function ProjectsPage() {
           {projects.map((p) => (
             <article
               key={p.id}
-              className="reveal rounded-[14px] border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-card-hover"
+              tabIndex={isTouch ? undefined : 0}
+              className="reveal rounded-[14px] border border-border bg-card p-5 transition-colors hover:border-border-strong hover:bg-card-hover focus-within:border-border-strong focus-within:bg-card-hover outline-none"
             >
               <a
-                href={p.href}
+                href={isTouch ? p.href : undefined}
                 target="_blank"
-                rel="noopener"
-                data-analytics-click={`click:project:${p.title
-                  .toLowerCase()
-                  .replace(/[^a-z0-9]+/g, "-")
-                  .replace(/(^-|-$)/g, "")}`}
-                className="group -mx-5 -mt-5 mb-4 block overflow-hidden rounded-t-[14px] border-b border-border"
+                rel="noopener noreferrer"
+                className={`group/cover -mx-5 -mt-5 mb-4 block overflow-hidden rounded-t-[14px] border-b border-border relative ${
+                  isTouch ? "cursor-pointer" : "cursor-default"
+                }`}
               >
                 <img
                   src={p.coverUrl}
@@ -87,22 +93,34 @@ function ProjectsPage() {
                   height={720}
                   className="aspect-video w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                 />
+                {!isTouch && (
+                  <div className="absolute inset-0 bg-black/45 backdrop-blur-[3px] flex items-center justify-center opacity-0 group-hover/cover:opacity-100 group-focus-within/cover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover/cover:pointer-events-auto group-focus-within/cover:pointer-events-auto">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(p.href, "_blank", "noopener,noreferrer");
+                      }}
+                      className="px-4.25 py-2.25 bg-white text-black font-semibold rounded-full hover:bg-neutral-100 focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 outline-none duration-150 shadow-md text-sm cursor-pointer"
+                      tabIndex={0}
+                    >
+                      Preview
+                    </button>
+                  </div>
+                )}
               </a>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <a
-                    href={p.href}
+                    href={isTouch ? p.href : undefined}
                     target="_blank"
-                    rel="noopener"
-                    data-analytics-click={`click:project:${p.title
-                      .toLowerCase()
-                      .replace(/[^a-z0-9]+/g, "-")
-                      .replace(/(^-|-$)/g, "")}`}
-                    className="text-[1.05rem] font-semibold tracking-[-0.02em] text-fg-strong hover:underline"
+                    rel="noopener noreferrer"
+                    className={`block text-[1.05rem] font-semibold tracking-[-0.02em] text-fg-strong ${
+                      isTouch ? "hover:underline cursor-pointer" : "cursor-default"
+                    }`}
                   >
                     {p.title}
                   </a>
-                  <div className="mt-1 inline-flex items-center gap-1.5 font-mono text-[0.68rem] text-muted">
+                  <div className="mt-2 flex items-center gap-2 font-mono text-[0.68rem] text-muted">
                     <span
                       className={`h-1.75 w-1.75 rounded-full ${p.live ? "bg-ok" : "bg-faint"}`}
                       style={p.live ? { animation: "pulse-dot 2.4s infinite" } : undefined}
@@ -113,7 +131,7 @@ function ProjectsPage() {
                 <a
                   href={p.href}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   data-analytics-click={`click:project:${p.title
                     .toLowerCase()
                     .replace(/[^a-z0-9]+/g, "-")

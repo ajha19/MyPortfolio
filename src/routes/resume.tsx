@@ -12,6 +12,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Oneko } from "@/components/Oneko";
 import { useReveal } from "@/hooks/useReveal";
 import { getSiteContent } from "@/data/content";
+import { TechPill } from "@/components/TechPill";
 
 export const Route = createFileRoute("/resume")({
   head: () => ({
@@ -106,9 +107,6 @@ function ResumePage() {
           <IconLink href={content.email} label="Email">
             <Mail className="h-4 w-4" /> Email
           </IconLink>
-          <IconLink href={resumePdfUrl} label="Live portfolio">
-            <ExternalLink className="h-4 w-4" /> Portfolio
-          </IconLink>
         </div>
 
         {/* Experience */}
@@ -116,22 +114,41 @@ function ResumePage() {
           <div className="flex flex-col gap-3">
             {content.experience.map((x, i) => (
               <div key={i} className="rounded-[14px] border border-border bg-card p-5">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <div>
-                    <div className="text-[1.02rem] font-semibold tracking-[-0.02em] text-fg-strong">
-                      {x.company}
-                    </div>
-                    <div className="text-[0.92rem] text-fg">{x.role}</div>
+                <div className="flex gap-3.5">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-[11px] border border-border bg-pill">
+                    {x.logoUrl ? (
+                      <img
+                        src={x.logoUrl}
+                        alt={`${x.company} logo`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-[10px] text-muted font-bold">
+                        EXP
+                      </div>
+                    )}
                   </div>
-                  <div className="font-mono text-[0.73rem] text-faint">
-                    {x.period} · {x.place}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[1.02rem] font-semibold tracking-[-0.02em] text-fg-strong">
+                        {x.company}
+                      </span>
+                      {x.current && <WorkingBadge />}
+                    </div>
+                    <div className="mt-px text-[0.92rem] text-fg">{x.role}</div>
+                    <div className="mt-0.5 flex flex-wrap gap-2.5 font-mono text-[0.73rem] text-faint">
+                      <span>{x.period}</span>
+                      <span>{x.place}</span>
+                    </div>
                   </div>
                 </div>
-                <ul className="mt-3 flex flex-col gap-1.75 [&_b]:font-semibold [&_b]:text-fg">
+                <TechLabel>Technologies</TechLabel>
+                <Pills items={x.tech} />
+                <ul className="mt-3.5 flex flex-col gap-1.75">
                   {x.bullets.map((b, j) => (
                     <li
                       key={j}
-                      className="relative pl-4 text-[0.9rem] text-muted before:absolute before:left-0.5 before:text-faint before:content-['•']"
+                      className="relative pl-4 text-[0.9rem] text-muted before:absolute before:left-0.5 before:text-faint before:content-['•'] [&_b]:font-semibold [&_b]:text-fg"
                       dangerouslySetInnerHTML={{ __html: b }}
                     />
                   ))}
@@ -143,14 +160,33 @@ function ResumePage() {
 
         {/* Education */}
         <ResumeSection title="Education">
-          <div className="rounded-[14px] border border-border bg-card p-5">
+          <div className="flex flex-col gap-3">
             {content.education.map((e, i) => (
-              <div key={i} className="flex flex-wrap items-baseline justify-between gap-2">
-                <div>
-                  <div className="text-[1rem] font-semibold text-fg-strong">{e.title}</div>
-                  <div className="text-[0.9rem] text-muted">{e.place}</div>
+              <div key={i} className="rounded-[14px] border border-border bg-card p-5">
+                <div className="flex gap-3.5">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-[11px] border border-border bg-pill">
+                    {e.logoUrl ? (
+                      <img
+                        src={e.logoUrl}
+                        alt={`${e.place} logo`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-[10px] text-muted font-bold">
+                        EDU
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <div>
+                        <div className="text-[1rem] font-semibold text-fg-strong">{e.title}</div>
+                        <div className="text-[0.9rem] text-muted">{e.place}</div>
+                      </div>
+                      <div className="font-mono text-[0.73rem] text-faint">{e.period}</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="font-mono text-[0.73rem] text-faint">{e.period}</div>
               </div>
             ))}
           </div>
@@ -159,13 +195,16 @@ function ResumePage() {
         {/* Skills */}
         <ResumeSection title="Skills">
           <div className="rounded-[14px] border border-border bg-card p-5">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               {content.skills.map((s) => (
-                <div key={s.category} className="grid grid-cols-1 gap-1 sm:grid-cols-[140px_1fr]">
-                  <div className="font-mono text-[0.72rem] uppercase tracking-[0.08em] text-faint">
+                <div
+                  key={s.category}
+                  className="grid grid-cols-1 items-start gap-1.5 sm:grid-cols-[120px_1fr] sm:gap-3.5"
+                >
+                  <div className="pt-1 font-mono text-[0.73rem] uppercase tracking-[0.08em] text-faint">
                     {s.category}
                   </div>
-                  <div className="text-[0.92rem] text-fg">{s.items.join(", ")}</div>
+                  <Pills items={s.items} />
                 </div>
               ))}
             </div>
@@ -205,6 +244,32 @@ function ResumeSection({ title, children }: { title: string; children: React.Rea
       </h2>
       {children}
     </section>
+  );
+}
+
+function WorkingBadge() {
+  return (
+    <span className="inline-flex items-center rounded-md bg-ok-faint px-1.5 py-0.5 text-[0.62rem] font-semibold text-ok uppercase tracking-wider">
+      Present
+    </span>
+  );
+}
+
+function TechLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mt-4 mb-2.5 font-mono text-[0.66rem] uppercase tracking-[0.08em] text-faint">
+      {children}
+    </div>
+  );
+}
+
+function Pills({ items }: { items: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-1.75">
+      {items.map((t) => (
+        <TechPill key={t} name={t} />
+      ))}
+    </div>
   );
 }
 

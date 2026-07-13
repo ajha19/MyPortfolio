@@ -62,16 +62,21 @@ DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=require
 ## 🚀 Setup & Local Development Cycle
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Verify Database Schema
+
 To check current database compatibility or manually define database tables:
+
 ```bash
 npx drizzle-kit generate
 ```
+
 Since CockroachDB might restrict introspection queries in drizzle-kit push CLI, database schemas can also be verified manually on CockroachDB with the following SQL:
+
 ```sql
 CREATE TABLE IF NOT EXISTS analytics_sessions (
   id TEXT PRIMARY KEY,
@@ -94,11 +99,13 @@ CREATE TABLE IF NOT EXISTS analytics_events (
 ```
 
 ### 3. Run Development Server
+
 ```bash
 npm run dev
 ```
 
 ### 4. Build Production Bundle
+
 ```bash
 npm run build
 ```
@@ -111,6 +118,7 @@ I'm always open to discussing new projects, creative ideas, or opportunities to 
 - **LinkedIn**: [Aman Jha](https://www.linkedin.com/in/aman-jha-3103a9185/)
 - **GitHub**: [ajha19](https://github.com/ajha19)
 - **Portfolio**: [Aman Jha](https://aman-jha-portfolio.netlify.app/)
+
 ---
 
 Made with ❤️ and &lt;/&gt; by **[Aman Jha](https://github.com/ajha19)**

@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminLayoutRouteImport } from './routes/admin/_layout'
 import { Route as AdminLayoutIndexRouteImport } from './routes/admin/_layout/index'
+import { Route as AdminLayoutResumeRouteImport } from './routes/admin/_layout/resume'
 import { Route as AdminLayoutProjectsRouteImport } from './routes/admin/_layout/projects'
 import { Route as AdminLayoutContentRouteImport } from './routes/admin/_layout/content'
 
@@ -48,6 +49,11 @@ const AdminLayoutIndexRoute = AdminLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminLayoutRoute,
 } as any)
+const AdminLayoutResumeRoute = AdminLayoutResumeRouteImport.update({
+  id: '/resume',
+  path: '/resume',
+  getParentRoute: () => AdminLayoutRoute,
+} as any)
 const AdminLayoutProjectsRoute = AdminLayoutProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/content': typeof AdminLayoutContentRoute
   '/admin/projects': typeof AdminLayoutProjectsRoute
+  '/admin/resume': typeof AdminLayoutResumeRoute
   '/admin/': typeof AdminLayoutIndexRoute
 }
 export interface FileRoutesByTo {
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/content': typeof AdminLayoutContentRoute
   '/admin/projects': typeof AdminLayoutProjectsRoute
+  '/admin/resume': typeof AdminLayoutResumeRoute
   '/admin': typeof AdminLayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/_layout/content': typeof AdminLayoutContentRoute
   '/admin/_layout/projects': typeof AdminLayoutProjectsRoute
+  '/admin/_layout/resume': typeof AdminLayoutResumeRoute
   '/admin/_layout/': typeof AdminLayoutIndexRoute
 }
 export interface FileRouteTypes {
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/content'
     | '/admin/projects'
+    | '/admin/resume'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/content'
     | '/admin/projects'
+    | '/admin/resume'
     | '/admin'
   id:
     | '__root__'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/_layout/content'
     | '/admin/_layout/projects'
+    | '/admin/_layout/resume'
     | '/admin/_layout/'
   fileRoutesById: FileRoutesById
 }
@@ -173,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLayoutIndexRouteImport
       parentRoute: typeof AdminLayoutRoute
     }
+    '/admin/_layout/resume': {
+      id: '/admin/_layout/resume'
+      path: '/resume'
+      fullPath: '/admin/resume'
+      preLoaderRoute: typeof AdminLayoutResumeRouteImport
+      parentRoute: typeof AdminLayoutRoute
+    }
     '/admin/_layout/projects': {
       id: '/admin/_layout/projects'
       path: '/projects'
@@ -193,12 +212,14 @@ declare module '@tanstack/react-router' {
 interface AdminLayoutRouteChildren {
   AdminLayoutContentRoute: typeof AdminLayoutContentRoute
   AdminLayoutProjectsRoute: typeof AdminLayoutProjectsRoute
+  AdminLayoutResumeRoute: typeof AdminLayoutResumeRoute
   AdminLayoutIndexRoute: typeof AdminLayoutIndexRoute
 }
 
 const AdminLayoutRouteChildren: AdminLayoutRouteChildren = {
   AdminLayoutContentRoute: AdminLayoutContentRoute,
   AdminLayoutProjectsRoute: AdminLayoutProjectsRoute,
+  AdminLayoutResumeRoute: AdminLayoutResumeRoute,
   AdminLayoutIndexRoute: AdminLayoutIndexRoute,
 }
 
