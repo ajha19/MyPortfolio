@@ -15,7 +15,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { getCurrentAdmin, login } from "@/data/auth";
 
+const loginSearchSchema = z.object({
+  expired: z.string().optional(),
+});
+
 export const Route = createFileRoute("/admin/login")({
+  validateSearch: loginSearchSchema,
   beforeLoad: async () => {
     const admin = await getCurrentAdmin();
     if (admin) throw redirect({ to: "/admin" });
@@ -30,6 +35,8 @@ const loginSchema = z.object({
 
 function AdminLoginPage() {
   const navigate = useNavigate();
+  const { expired } = Route.useSearch();
+  const isExpired = expired === "true";
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
@@ -49,6 +56,11 @@ function AdminLoginPage() {
       <h1 className="mb-6 text-[1.6rem] font-bold tracking-[-0.035em] text-fg-strong">
         Admin login
       </h1>
+      {isExpired && (
+        <div className="mb-6 rounded-lg border border-border bg-card p-4.5 text-center text-sm font-medium text-fg-strong">
+          Your session has expired. Please log in again.
+        </div>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <FormField

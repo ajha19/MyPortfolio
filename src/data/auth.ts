@@ -87,7 +87,7 @@ export const requireAdmin = createServerOnlyFn(async () => {
   return admin;
 });
 
-export const getCurrentAdmin = createServerFn({ method: "GET" }).handler(async () => {
+export const getCurrentAdmin = createServerFn({ method: "POST" }).handler(async () => {
   return getAdminFromRequest();
 });
 

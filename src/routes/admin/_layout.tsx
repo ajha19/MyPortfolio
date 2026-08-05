@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   createFileRoute,
   Link,
@@ -39,6 +39,58 @@ function AdminLayout() {
       setLoggingOut(false);
     }
   }
+
+  useEffect(() => {
+    let timeoutId: any;
+
+    async function triggerLogout() {
+      setLoggingOut(true);
+      try {
+        await logout();
+        await router.invalidate();
+        await navigate({
+          to: "/admin/login",
+          search: { expired: "true" },
+        });
+      } catch (err) {
+        console.error("Auto logout failed:", err);
+      } finally {
+        setLoggingOut(false);
+      }
+    }
+
+    function resetTimer() {
+      if (timeoutId) clearTimeout(timeoutId);
+
+      const timeoutMs =
+        typeof window !== "undefined" &&
+        (window as any).__TEST_INACTIVITY_TIMEOUT !== undefined
+          ? (window as any).__TEST_INACTIVITY_TIMEOUT
+          : 30 * 60 * 1000; // 30 minutes
+
+      timeoutId = setTimeout(() => {
+        triggerLogout();
+      }, timeoutMs);
+    }
+
+    // Set initial timer
+    resetTimer();
+
+    // Listen to user interactions
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    const handler = () => resetTimer();
+
+    events.forEach((evt) => {
+      window.addEventListener(evt, handler, { passive: true });
+    });
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      events.forEach((evt) => {
+        window.removeEventListener(evt, handler);
+      });
+    };
+  }, [navigate, router]);
 
   return (
     <div className="min-h-screen bg-background">
