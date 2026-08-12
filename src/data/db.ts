@@ -10,7 +10,7 @@ declare global {
 function createClient() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
-  return postgres(url, { ssl: "require" });
+  return postgres(url);
 }
 
 const client = globalThis.__dbClient ?? createClient();
