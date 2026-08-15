@@ -15,6 +15,9 @@ function createClient() {
   console.log(
     `[DB_RUNTIME] host=${parsed.hostname} database=${parsed.pathname.slice(1)}`
   );
+  console.log(
+    `[DB_RUNTIME] source_check DATABASE_URL_PRESENT=${Boolean(process.env.DATABASE_URL)}`
+  );
 
   return postgres(url);
 }
