@@ -10,6 +10,12 @@ declare global {
 function createClient() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
+
+  const parsed = new URL(url);
+  console.log(
+    `[DB_RUNTIME] host=${parsed.hostname} database=${parsed.pathname.slice(1)}`
+  );
+
   return postgres(url);
 }
 
